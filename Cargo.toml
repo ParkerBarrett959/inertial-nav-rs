@@ -1,0 +1,11 @@
+[package]
+name = "inertial-nav-rs"
+version = "0.1.0"
+edition = "2024"
+authors = ["Parker Barrett parkerbarrett1302@gmail.com"]
+description = "A Rust library for inertial navigation and sensor fusion"
+license = "MIT"
+repository = "https://github.com/ParkerBarrett959/inertial-nav-rs"
+
+[dependencies]
+nalgebra = "0.32"
