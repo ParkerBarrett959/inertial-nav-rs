@@ -1,7 +1,7 @@
 use nalgebra::{Matrix3, Vector3, Vector6};
 
 /// IMU Measurement
-#[derive(Debug, Clone, Copy)]
+#[derive(Debug, Clone, Copy, Default)]
 pub struct ImuMeasurement {
     pub t: f64,                // Seconds since UTC epoch (Jan 1, 1970)
     pub d_v: Vector3<f64>,     // 3-axis change in velocity measurement (m/s)
@@ -9,7 +9,7 @@ pub struct ImuMeasurement {
 }
 
 /// Gyroscope Error Model
-#[derive(Debug, Clone, Copy)]
+#[derive(Debug, Clone, Copy, Default)]
 pub struct GyroscopeError {
     pub scale_factor: Vector3<f64>, // 3-axis scale factor error (ppm)
     pub misalignment: Vector6<f64>, // 6-element misalignment (off-diagonals)
@@ -17,7 +17,7 @@ pub struct GyroscopeError {
 }
 
 /// Accelerometer Error Model
-#[derive(Debug, Clone, Copy)]
+#[derive(Debug, Clone, Copy, Default)]
 pub struct AccelerometerError {
     pub scale_factor: Vector3<f64>, // 3-axis scale factor error (ppm)
     pub misalignment: Vector6<f64>, // 6-element misalignment (off-diagonals)
@@ -25,14 +25,14 @@ pub struct AccelerometerError {
 }
 
 /// IMU Error Model
-#[derive(Debug, Clone, Copy)]
+#[derive(Debug, Clone, Copy, Default)]
 pub struct ImuError {
     pub accelerometer_error: AccelerometerError,
     pub gyroscope_error: GyroscopeError,
 }
 
 /// Position/Velocity/Attitude Navigation State
-#[derive(Debug, Clone, Copy)]
+#[derive(Debug, Clone, Copy, Default)]
 pub struct NavState {
     pub position: Vector3<f64>,     // 3 dimensional ECEF position vector
     pub velocity: Vector3<f64>,     // 3 dimensional ECEF velocity vector
