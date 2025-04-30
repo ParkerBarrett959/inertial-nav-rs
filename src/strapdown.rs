@@ -1,9 +1,8 @@
-use nalgebra::{Vector3};
-use crate::types::{ImuMeasurement, ImuError};
+use crate::types::{ImuError, NavState};
 
 /// Strapdown Integrator Struct
 pub struct Strapdown {
     pub t: f64,              // Timestamp of the current process
-    // TODO: Add a navigation state (PVA)
+    pub nav_state: NavState, // Strapdown position/velocity/attitude
     pub imu_error: ImuError, // IMU error model used to compensate measurements
 }

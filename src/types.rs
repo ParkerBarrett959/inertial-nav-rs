@@ -1,4 +1,4 @@
-use nalgebra::{Vector3, Vector6};
+use nalgebra::{Matrix3, Vector3, Vector6};
 
 /// IMU Measurement
 #[derive(Debug, Clone, Copy)]
@@ -29,4 +29,12 @@ pub struct AccelerometerError {
 pub struct ImuError {
     pub accelerometer_error: AccelerometerError,
     pub gyroscope_error: GyroscopeError,
+}
+
+/// Position/Velocity/Attitude Navigation State
+#[derive(Debug, Clone, Copy)]
+pub struct NavState {
+    pub position: Vector3<f64>,     // 3 dimensional ECEF position vector
+    pub velocity: Vector3<f64>,     // 3 dimensional ECEF velocity vector
+    pub body_to_ecef: Matrix3<f64>, // 3x3 DCM relating the IMU body frame to ECEF
 }
