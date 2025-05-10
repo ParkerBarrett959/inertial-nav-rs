@@ -25,7 +25,7 @@ pub struct ImuMeasurement {
 /// # Fields
 ///
 /// * `scale_factor` - 3-axis scale factor error (ppm)
-/// * `misalignment` - 6-element misalignment (off-diagonals)
+/// * `misalignment` - 6-element misalignment (off-diagonals row major)
 /// * `bias` - 3-axis bias (rad/s)
 #[derive(Debug, Clone, Copy, Default)]
 pub struct GyroscopeError {

@@ -1,6 +1,7 @@
 //! The top level navigation object
 use crate::strapdown::Strapdown;
-use crate::types::ImuError;
+use crate::types::{ImuError, ImuMeasurement};
+use crate::utilities::correct_imu;
 
 /// Navigation struct definition
 ///
@@ -62,5 +63,29 @@ impl Navigation {
             strapdown: init_strapdown,
             imu_error: init_imu_error,
         }
+    }
+
+    /// Integrate the current state given an IMU measurement
+    ///
+    /// This function first applies the IMU error model correction, then uses the
+    /// compensated measurement to integrate the strapdown and navigation filter.
+    ///
+    /// # Arguments
+    ///
+    /// * `imu` - A reference to a timestamped IMU measurement
+    ///
+    /// # Returns
+    ///
+    /// Returns the integrated navigation object
+    pub fn integrate(&mut self, imu: &ImuMeasurement) {
+        // Compute timestep
+        let dt: f64 = imu.t - self.t;
+
+        // Compensate the incoming measurement for errors
+        let imu_corrected: ImuMeasurement = correct_imu(&imu, &self.imu_error, dt);
+
+        // Integrate the strapdown solution
+
+        // Integrate the navigation filter
     }
 }
