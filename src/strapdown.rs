@@ -1,30 +1,35 @@
-use crate::types::{ImuError, NavState};
+//! The strapdown integrator
+use crate::types::NavState;
 
-/// Strapdown Integrator Struct
-#[derive(Default)]
+/// Strapdown struct definition
+///
+/// Defines the strapdown state which is a navigation state at a given time.
+///
+/// # Fields
+///
+/// * `t` - Unix timestamp (seconds) since UTC epoch (January 1st, 1970)
+/// * `nav_state` - The ECEF frame position/velocity/attitude
+#[derive(Debug, Clone, Copy, Default)]
 pub struct Strapdown {
-    pub t: f64,              // Timestamp of the current process
-    pub nav_state: NavState, // Strapdown position/velocity/attitude
-    pub imu_error: ImuError, // IMU error model used to compensate measurements
+    pub t: f64,
+    pub nav_state: NavState,
 }
 
-/// Implementation of Strapdown
 impl Strapdown {
-    // Strapdown initialization with default error model
+    /// Initialization of the strapdown state
+    ///
+    /// # Arguments
+    ///
+    /// * `init_t` - Unix timestamp (seconds) since UTC epoch (January 1st, 1970)
+    /// * `init_state` - Initial ECEF position/velocity/attitude
+    ///
+    /// # Returns
+    ///
+    /// Returns the initialized strapdown object.
     pub fn new(init_t: f64, init_state: NavState) -> Self {
         Strapdown {
             t: init_t,
             nav_state: init_state,
-            ..Default::default()
-        }
-    }
-
-    // Strapdown initialization with error model specified
-    pub fn with_imu_error(init_t: f64, init_state: NavState, init_imu_error: ImuError) -> Self {
-        Strapdown {
-            t: init_t,
-            nav_state: init_state,
-            imu_error: init_imu_error,
         }
     }
 }
