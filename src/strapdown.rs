@@ -76,18 +76,19 @@ impl Strapdown {
 
         // Compute approximate current rate of change of velocity
         let v_kp1_approx: Vector3<f64> = self.nav_state_prev.velocity + self.v_dot_prev * dt;
+        let x_kp1_approx: Vector3<f64> =
+            self.nav_state_prev.position + 0.5 * dt * (self.nav_state_prev.velocity + v_kp1_approx);
         let coriolis: Vector3<f64> = -2.0 * omegaei_e * v_kp1_approx;
-        let centrifugal: Vector3<f64> =
-            -omegaei_e * omegaei_e * 0.5 * dt * (self.nav_state_prev.velocity + v_kp1_approx);
+        let centrifugal: Vector3<f64> = -omegaei_e * omegaei_e * x_kp1_approx;
         let specific_force: Vector3<f64> = self.nav_state.body_to_ecef * (imu.d_v / dt);
         let gravity: Vector3<f64> = Vector3::<f64>::zeros(); // TODO
         let v_dot_curr = coriolis + centrifugal + specific_force + gravity;
 
         // Integrate velocity and position using a trapezoidal integration scheme
         self.nav_state.velocity =
-            self.nav_state.velocity + 0.5 * dt * (self.v_dot_prev + v_dot_curr);
+            self.nav_state_prev.velocity + 0.5 * dt * (self.v_dot_prev + v_dot_curr);
         self.v_dot_prev = v_dot_curr;
-        self.nav_state.position = self.nav_state.position
+        self.nav_state.position = self.nav_state_prev.position
             + 0.5 * dt * (self.nav_state_prev.velocity + self.nav_state.velocity);
     }
 }
