@@ -1,5 +1,8 @@
 //! The strapdown integrator
-use crate::types::NavState;
+use crate::constants::OMEGA_EARTH;
+use crate::math::skew;
+use crate::types::{ImuMeasurement, NavState};
+use nalgebra::{Matrix3, Vector3};
 
 /// Strapdown struct definition
 ///
@@ -31,5 +34,38 @@ impl Strapdown {
             t: init_t,
             nav_state: init_state,
         }
+    }
+
+    /// Integrate the strapdown state with IMU data
+    ///
+    /// # Arguments
+    ///
+    /// * `imu` - The current IMU measurement
+    ///
+    /// # Returns
+    ///
+    /// Returns the integrated strapdown object.
+    pub fn integrate(&mut self, imu: &ImuMeasurement) {
+        // Compute timestep
+        let dt: f64 = imu.t - self.t;
+
+        // Compute approximate angular rate of ECEF wrt inertial on the ECEF frame
+        let wei_e = Vector3::<f64>::new(0.0, 0.0, OMEGA_EARTH);
+
+        // Compute angular rate of body wrt inertial in the body frame
+        let wbi_b: Vector3<f64> = imu.d_theta / dt;
+
+        // Compute angular rate of body wrt ECEF in the body frame
+        let wbe_b: Vector3<f64> = wbi_b - self.nav_state.body_to_ecef.transpose() * wei_e;
+
+        // Get skew symmetric matrix
+        let omegabe_b: Matrix3<f64> = skew(&wbe_b);
+
+        // Integrate attitude using matrix exponential approach
+        self.nav_state.body_to_ecef = self.nav_state.body_to_ecef * (omegabe_b * dt).exp();
+
+        // Integrate velocity
+
+        // Integrate position
     }
 }
