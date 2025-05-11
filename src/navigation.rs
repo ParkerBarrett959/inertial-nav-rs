@@ -85,6 +85,7 @@ impl Navigation {
         let imu_corrected: ImuMeasurement = correct_imu(&imu, &self.imu_error, dt);
 
         // Integrate the strapdown solution
+        self.strapdown.integrate(&imu_corrected);
 
         // Integrate the navigation filter
     }

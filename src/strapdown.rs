@@ -55,7 +55,6 @@ impl Strapdown {
         // Compute timestep and set previous state to current state
         let dt: f64 = imu.t - self.t;
         self.nav_state_prev = self.nav_state;
-        self.t = imu.t;
 
         // Compute approximate angular rate of ECEF wrt inertial on the ECEF frame
         let wei_e = Vector3::<f64>::new(0.0, 0.0, OMEGA_EARTH);
@@ -74,21 +73,28 @@ impl Strapdown {
         let body_curr_to_body_prev: Matrix3<f64> = (omegabe_b * dt).exp();
         self.nav_state.body_to_ecef = self.nav_state_prev.body_to_ecef * body_curr_to_body_prev;
 
-        // Compute approximate current rate of change of velocity
+        // Compute rough approximation of current position/velocity
         let v_kp1_approx: Vector3<f64> = self.nav_state_prev.velocity + self.v_dot_prev * dt;
         let x_kp1_approx: Vector3<f64> =
             self.nav_state_prev.position + 0.5 * dt * (self.nav_state_prev.velocity + v_kp1_approx);
+
+        // Compute terms in rate of change of velocity expression
         let coriolis: Vector3<f64> = -2.0 * omegaei_e * v_kp1_approx;
         let centrifugal: Vector3<f64> = -omegaei_e * omegaei_e * x_kp1_approx;
         let specific_force: Vector3<f64> = self.nav_state.body_to_ecef * (imu.d_v / dt);
         let gravity: Vector3<f64> = Vector3::<f64>::zeros(); // TODO
+
+        // Compute rate of change of velocity
         let v_dot_curr = coriolis + centrifugal + specific_force + gravity;
 
         // Integrate velocity and position using a trapezoidal integration scheme
         self.nav_state.velocity =
             self.nav_state_prev.velocity + 0.5 * dt * (self.v_dot_prev + v_dot_curr);
-        self.v_dot_prev = v_dot_curr;
         self.nav_state.position = self.nav_state_prev.position
             + 0.5 * dt * (self.nav_state_prev.velocity + self.nav_state.velocity);
+
+        // Update strapdown state
+        self.v_dot_prev = v_dot_curr;
+        self.t = imu.t;
     }
 }
