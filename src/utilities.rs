@@ -2,7 +2,7 @@
 use crate::types::{ImuError, ImuMeasurement};
 use nalgebra::Matrix3;
 
-/// Correct an iMU measurement given an error model
+/// Correct an IMU measurement given an error model
 ///
 /// # Arguments
 ///
